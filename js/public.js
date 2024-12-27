@@ -1,6 +1,6 @@
 //定义常量
 //基本地址
-const BASEURL='http://192.168.4.2:8088/fwgl';
+const BASEURL='http://127.0.0.1:8080/fwgl';
 
 //根据id获取value值
 /**
