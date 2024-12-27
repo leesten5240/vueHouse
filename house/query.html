@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="../js/vue.js"></script>
+		<script src="../js/ajax.js"></script>
+		<script src="../js/public.js"></script>
+		<style>
+			.ov {
+				background-color: antiquewhite;
+			}
+
+			.ev {
+				background-color: #bad7df;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>住房列表</h2>
+		<div id="app">
+			<table border="1" width="100%" cellspacing="0">
+				<thead>
+					<tr align="center">
+						<td>序号</td>
+						<td>房屋编号</td>
+						<td>名称</td>
+						<td>类型</td>
+						<td>面积</td>
+						<td>价格</td>
+						<td>地址</td>
+						<td>主人</td>
+						<td>操作</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(h,index) in hs" v-bind:class="index%2==0?'ov':'ev'" align='center'>
+						<td>{{index+1}}</td>
+						<td>{{h.fwId}}</td>
+						<td>{{h.title}}</td>
+						<td>{{h.fwtype.typeName}}</td>
+						<td>{{h.area}}</td>
+						<td>{{h.price}}</td>
+						<td>{{h.address}}</td>
+						<td>{{h.publisher?h.publisher.nickName:'无'}}</td>
+						<td><button v-on:click="del(h.fwId)">删除</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<script>
+			window.onload = loadData;
+
+			function loadData() {
+				let app = new Vue({
+					el: '#app',
+					data: {
+						hs: []
+					},
+					created: function() {
+						this.loadHouses();
+					},
+					methods: {
+						loadHouses: function() {
+							//用于初始化data里的数据
+							let url = BASEURL + '/fw/find.action';
+							//在这里this的指向是Vue对象
+							//let that=this;
+							getJson(url, null, (d) => {
+								// console.log(d.result.fws);
+								//箭头函数相比于匿名函数，不会改变函数体内this的指向，也就是在这里this还是指向Vue对象
+								this.hs = d.result.fws;
+							});
+						},
+						del: function(hid) {
+							if (confirm('确定删除' + hid + '？')) {
+								let url = BASEURL + '/fw/del.action';
+								let obj = {
+									'fid': hid
+								};
+								getJson(url, obj, (d) => {
+									if (d.errorcode == 0) {
+										this.loadHouses();
+									} else {
+										alert('删除失败');
+									}
+								})
+							}
+						}
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

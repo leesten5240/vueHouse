@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="../js/vue.js"></script>
+		<script src="../js/ajax.js"></script>
+		<script src="../js/public.js"></script>
+		<style>
+			body {
+				width: 100%;
+				height: 100%
+			}
+
+			#app {
+				width: 100%;
+				height: 250px;
+				margin: 0 auto;
+				background-color: #ffe2e2;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: space-around;
+			}
+			#app select{
+				width:157px;
+			}
+			#app button{
+				width: 70px;
+				height: 40px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>添加住房</h2>
+		<div id="app">
+			<div>房间编号：<input type="text" v-model="h.fwId" /></div>
+			<div>
+				房间类型：
+				<select name="fwType" v-model="h.fwtype.typeId">
+					<option v-for="t in types" v-bind:value="t.typeId">{{t.typeName}}</option>
+				</select>
+			</div>
+			<div>房间面积：<input type="text" v-model="h.area" /></div>
+			<div>房间价格：<input type="text" v-model="h.price" /></div>
+			<div>房屋地段：<input type="text" v-model="h.address" /></div>
+			<div>房屋标题：<input type="text" v-model="h.title" /></div>
+			<div>
+				<button v-on:click="submitAdd()">确定</button>
+			</div>
+		</div>
+		<script>
+			let app = new Vue({
+				el: '#app',
+				data: {
+					types: [],
+					h: {
+						"fwId": "1001",
+						"title": "aadb",
+						"fwtype": {
+							"typeId": 1,
+							"typeName": "二室一厅"
+						},
+						"price": "6500",
+						"area": "45",
+						"address": "沈阳和平区"
+					}
+				},
+				created: function() {
+					let url = BASEURL + '/type/find.action';
+					getJson(url, null, (d) => {
+						this.types = d.result.types;
+					});
+				},
+				methods:{
+					submitAdd:function(){
+						let url=BASEURL+'/fw/add.action';
+						postJson(url,this.h,(d)=>{
+							if(d.errorcode==0){
+								alert('添加成功！');
+							}else{
+								alert('添加失败，请重试！');
+							}
+						});
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
